@@ -1,4 +1,4 @@
-import tweepy
+import tweepy, threading
 from coinmarketcap import Market
 
 # simple twitter bot to show basic stats for a coin
@@ -32,4 +32,13 @@ auth = tweepy.OAuthHandler('consumer_key', 'consumer_secret')
 auth.set_access_token('access_token', 'access_token_secret')
 api = tweepy.API(auth)
 
-api.update_status(stats)
+
+# 86400 seconds = 24 hours
+WAIT_SECONDS = 86400
+
+# function that posts every 24 hours
+def post_24h():
+    api.update_status(stats)
+    threading.Timer(WAIT_SECONDS, post_24h).start()
+    
+post_24h()
